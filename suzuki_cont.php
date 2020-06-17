@@ -1,6 +1,6 @@
 <?php 
 require_once './suzuki_model.php';
-
+header('X-Frame-Options: DENY');
 $array[] = 0;
 $check = false;
 
