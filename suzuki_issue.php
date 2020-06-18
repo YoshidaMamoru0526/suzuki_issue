@@ -13,10 +13,12 @@
         print $e;
         exit;
     }
+    //計算された答えが元の数字以上であれば、答えを表示
     if(get_answer($num , $range , $num_origin) >= $num_origin){
     //エラーメッセージがなければ計算結果を表示
     print 'カプレカ数は'.get_answer($num , $range , $num_origin).'です';
     exit;
+    //もとの数字未満である場合は、10倍して桁を増やしたうえでもう一度計算
     }else{
         $num_2 = $num_origin*10;
         $range = mb_strlen($num_2);
@@ -24,6 +26,15 @@
         if(get_answer($num_2 , $range , $num_origin) >= $num_origin){
             print 'カプレカ数は'.get_answer($num_2 , $range , $num_origin).'です';
             exit;
+        //2度目の計算結果が元の数字未満である場合に、100倍して再度計算
+        }else{
+            $num_3 = $num_origin*100;
+            $range = mb_strlen($num_3);
+            
+            if(get_answer($num_3 , $range , $num_origin) >= $num_origin){
+            print 'カプレカ数は'.get_answer($num_3 , $range , $num_origin).'です';
+            exit;
+            }
         }
     }
     
@@ -82,14 +93,18 @@
     function get_answer($num , $range , $num_origin){
         //$array[] = null;
         $hoge = null;
-        
+        $array[] = null;
         //$hogeに代入された値と、計算された$numの値が揃うまでループ
         while($hoge !== $num){
             //$hogeには計算された$numを随時代入
             $hoge = $num;
             //$numの値で最大ー最小を計算してから、再度$numに代入
             $num = calculate($num , $range);
-            
+            array_push($array , $num);
+            if(count($array) > 10000){
+                $num = $num_origin-1;
+                break;
+            }
         }
     //$hogeと$numの値が揃ったものを返す
     return $num;
