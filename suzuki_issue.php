@@ -13,6 +13,10 @@
         print $e;
         exit;
     }
+    if(get_answer($num , $range , $num_origin) === 0){
+        print '計算結果は0になります。ゾロ目ではない数字を入力してください';
+        exit;
+    }
     //計算された答えが元の数字以上であれば、答えを表示
     if(get_answer($num , $range , $num_origin) >= $num_origin){
     //エラーメッセージがなければ計算結果を表示
