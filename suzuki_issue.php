@@ -2,17 +2,19 @@
     //標準入力画面
     print '0以上1000000000以下の、数字を入力してください';
     $num = trim(fgets(STDIN));
-    //入力された数値を変数に保存
+    //入力された数値を変数に保存(計算結果をもとの数と比較するため)
     $num_origin = $num;
     //あらかじめ入力された数字の桁数を変数に代入
     $range = mb_strlen($num);
     
-    //結果の表示
+    //---以下結果の表示---//
+    
     //エラーメッセージがあれば優先的に表示
     if(isset($e) === TRUE){
         print $e;
         exit;
     }
+    //ゾロ目が入力された場合は、計算結果と注意文の表示
     if(get_answer($num , $range , $num_origin) === 0){
         print '計算結果は0になります。ゾロ目ではない数字を入力してください';
         exit;
@@ -39,11 +41,26 @@
             print 'カプレカ数は'.get_answer($num_3 , $range , $num_origin).'です';
             exit;
             }
+            //６桁のカプレカ数を出すために、３桁ずつに分けて、片方の３桁からでたカプレカ数をつなげて再計算（ただこれはカプレカ数をわかった上での計算になってる
+            else{
+                $num = length_cut($num_origin);
+                $range = mb_strlen($num);
+                $num_4 = get_answer($num , $range , $num_origin);
+                $num_4 .= get_answer($num , $range , $num_origin);
+                $range = mb_strlen($num_4);
+                if(get_answer($num_4 , $range , $num_origin) >= $num_origin){
+                    print 'カプレカ数は'.get_answer($num_4 , $range , $num_origin).'です';
+                    exit;
+                }
+            }
         }
     }
     
     
+    
+    
     // ------以下　関数定義-----//
+
 
     //エラーチェック
     if(is_numeric($num) !== TRUE){
@@ -54,6 +71,8 @@
         $e = '自然数を入力してください';
         exit($e);
     }
+    
+    
     //入力された数値の最大ー最小を求める
     function get_big_small($num,$type,$range){
         $result = array();
@@ -104,8 +123,11 @@
             $hoge = $num;
             //$numの値で最大ー最小を計算してから、再度$numに代入
             $num = calculate($num , $range);
+            //計算結果を随時$arrayに追加していく。(ループ)
             array_push($array , $num);
+            //$arrayに追加された要素が10,000を超えた段階でループから抜ける。→カプレカ数が求められないと判断して、桁を増やして2度目の計算に移る
             if(count($array) > 10000){
+                //$num_originと等しい、以上だと答えとして表示されてしまうので、1引いたうえで桁を増やす
                 $num = $num_origin-1;
                 break;
             }
@@ -115,7 +137,10 @@
     }
     
     
-    
-    
-
+    //６桁のカプレカ数を求めるために、３桁にずつに分ける（３桁のカプレカ数を用いるため)
+    function length_cut($num){
+        //$numの上位桁３桁を取り出す
+        $num = mb_substr($num , 0 , 3);
+        return $num;
+    }
 ?>
